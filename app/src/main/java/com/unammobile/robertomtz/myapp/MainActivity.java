@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.facebook.share.model.SharePhoto;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 v = (TextView) findViewById(R.id.tv_to_publish);
+                v.setText(((EditText)findViewById(R.id.et_to_publish)).getText().toString());
 
                 Bitmap b = Bitmap.createBitmap(v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
                 Canvas c = new Canvas(b);
