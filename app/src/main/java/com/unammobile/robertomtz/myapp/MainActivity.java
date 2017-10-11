@@ -1,7 +1,10 @@
 package com.unammobile.robertomtz.myapp;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,8 +19,10 @@ import com.facebook.share.widget.ShareDialog;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView v;
+    TextView textView;
     ShareDialog shareDialog;
+    View viewToPublish;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,18 +32,23 @@ public class MainActivity extends AppCompatActivity {
         shareDialog = new ShareDialog(this);
         Button fbShareButton = (Button) findViewById(R.id.btn_publish);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Cargando...");
+
+        viewToPublish = findViewById(R.id.view_to_publish);
 
         fbShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.show();
 
-                v = (TextView) findViewById(R.id.tv_to_publish);
-                v.setText(((EditText)findViewById(R.id.et_to_publish)).getText().toString());
+                textView = (TextView) findViewById(R.id.tv_to_publish);
+                textView.setText(((EditText)findViewById(R.id.et_to_publish)).getText().toString());
 
-                Bitmap b = Bitmap.createBitmap(v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+                Bitmap b = Bitmap.createBitmap(viewToPublish.getLayoutParams().width, viewToPublish.getLayoutParams().height, Bitmap.Config.ARGB_8888);
                 Canvas c = new Canvas(b);
-                v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
-                v.draw(c);
+                viewToPublish.layout(0, 0, viewToPublish.getLayoutParams().width, viewToPublish.getLayoutParams().height);
+                viewToPublish.draw(c);
 
                 SharePhoto photo = new SharePhoto.Builder()
                         .setBitmap(b)
@@ -47,14 +57,17 @@ public class MainActivity extends AppCompatActivity {
                         .addPhoto(photo)
                         .build();
 
-                if (shareDialog.canShow(SharePhotoContent.class)){
-                    shareDialog.show(content);
-                }
+                if (shareDialog.canShow(SharePhotoContent.class))
+                    ShareDialog.show(MainActivity.this, content);
 
             }
         });
 
-
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        progressDialog.dismiss();
+    }
 }
