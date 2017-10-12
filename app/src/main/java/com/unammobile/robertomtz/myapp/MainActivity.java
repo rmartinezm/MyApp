@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.SendButton;
+import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     ShareDialog shareDialog;
     View viewToPublish;
     ProgressDialog progressDialog;
+    SharePhotoContent content;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +33,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         shareDialog = new ShareDialog(this);
-        Button fbShareButton = (Button) findViewById(R.id.btn_publish);
-
+        Button loadButton = (Button) findViewById(R.id.load);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Cargando...");
-
         viewToPublish = findViewById(R.id.view_to_publish);
 
-        fbShareButton.setOnClickListener(new View.OnClickListener() {
+        loadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressDialog.show();
@@ -53,21 +54,19 @@ public class MainActivity extends AppCompatActivity {
                 SharePhoto photo = new SharePhoto.Builder()
                         .setBitmap(b)
                         .build();
-                SharePhotoContent content = new SharePhotoContent.Builder()
+                content = new SharePhotoContent.Builder()
                         .addPhoto(photo)
                         .build();
 
-                if (shareDialog.canShow(SharePhotoContent.class))
-                    ShareDialog.show(MainActivity.this, content);
+                ShareButton shareButton = (ShareButton) findViewById(R.id.shareButton);
+                shareButton.setShareContent(content);
+
+                SendButton sendButton = (SendButton)findViewById(R.id.sendButton);
+                sendButton.setShareContent(content);
+                progressDialog.dismiss();
 
             }
         });
-
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        progressDialog.dismiss();
-    }
 }
